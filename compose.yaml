@@ -1,3 +1,5 @@
+version: '3.8'  # Use the appropriate version for your Docker Compose setup
+
 services:
   app:
     image: node:18-alpine
@@ -12,6 +14,8 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: secret
       MYSQL_DB: todos
+    networks:
+      - todo-app  # Assign the app service to the todo-app network
 
   mysql:
     image: mysql:8.0
@@ -20,3 +24,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: todos
+    networks:
+      - todo-app  # Assign the mysql service to the todo-app network
+
+networks:
+  todo-app:  # Define the todo-app network
