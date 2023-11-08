@@ -1,21 +1,29 @@
-version: '3.8'  # Use the appropriate version for your Docker Compose setup
-
 services:
   app:
-    image: node:18-alpine
-    command: sh -c "yarn install && yarn run dev"
+    build: 
+      context: ./getting-started-app
+      dockerfile: Dockerfile
     ports:
-      - 80:3000
-    working_dir: /app
-    volumes:
-      - ./:/app
+      - "3000:3000"
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: secret
       MYSQL_DB: todos
     networks:
-      - todo-app  # Assign the app service to the todo-app network
+      - todos-network
+
+  app-readonly:
+    image: kaikrd/app-readonly:latest
+    ports:
+      - "3001:3001"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: todos
+    networks:
+      - todos-network
 
   mysql:
     image: mysql:8.0
@@ -25,7 +33,8 @@ services:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: todos
     networks:
-      - todo-app  # Assign the mysql service to the todo-app network
+      - todos-network
 
 networks:
-  todo-app:  # Define the todo-app network
+  todos-network:
+    driver: bridge
